@@ -1,0 +1,4 @@
+__pycache__/
+.pytest_cache/
+test_split.yaml
+test_clean.txt

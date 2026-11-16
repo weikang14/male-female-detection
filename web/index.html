@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Male and Female Detection</title>
+  <meta name="description" content="A YOLOv10s model that labels people as male or female, built as a live demo for a college open day.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <h1>Male and Female Detection</h1>
+      <p class="lede">A YOLOv10s model that boxes each person in a camera view and labels them male or female, built at work as a live demo for a college open day.</p>
+      <p class="links"><a href="https://github.com/weikang14/male-female-detection">Source on GitHub</a></p>
+    </div>
+  </header>
+
+  <main class="wrap" id="view">
+    <section class="panel demo">
+      <video src="data/demo.mp4" poster="img/poster.jpg" controls muted loop playsinline preload="metadata" aria-label="People at an outdoor event, each boxed and labelled male or female, with heads pixelated"></video>
+      <div>
+        <h2>What it does</h2>
+        <p>At the open day, visiting students stood in front of a webcam and watched the model find each person and label them male or female in real time. The goal was to show what computer vision can do, not to build a product. The final model was also exported to ONNX, TensorRT and TorchScript for faster inference.</p>
+        <p class="muted">The clip is <span data-v="demo.clip_s"></span> seconds of an event video from the project, run through the final model at confidence <span data-v="conf"></span>. Heads are pixelated for privacy: every person found by the model or by two COCO person detectors, and every face OpenCV finds.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Final model on the test set</h2>
+      <div class="stats" id="stats"></div>
+      <p class="muted">YOLOv10s trained from scratch. Scored on <span data-v="clean_photos"></span> test photos with <span data-v="female_boxes"></span> women and <span data-v="male_boxes"></span> men labelled. <span data-v="leaked"></span> of the <span data-v="test_photos"></span> test photos are left out because, after the datasets were merged, the same photos also appear in the training or validation split.</p>
+      <p>Of the <span data-v="people_fmt"></span> labelled people, the model found <span data-v="found_pct"></span>, and gave <span data-v="right_pct"></span> of those the right label. It labelled <span data-v="gender.female_as_male"></span> women as male and <span data-v="gender.male_as_female"></span> men as female.</p>
+    </section>
+
+    <section class="panel prose">
+      <h2>The dataset</h2>
+      <p>Four sets of photos were labelled with two classes, female and male, in Roboflow during September and October 2024, then merged into one dataset: <span data-v="unique_train_photos_fmt"></span> training photos, expanded to <span data-v="dataset.train_fmt"></span> images with augmented copies, plus <span data-v="dataset.valid"></span> validation and <span data-v="dataset.test"></span> test photos. The project also includes a small OpenCV notebook that cuts frames out of recorded video, to collect more photos.</p>
+    </section>
+
+    <section class="panel prose">
+      <h2>What the training logs show</h2>
+      <p><span data-v="runs_n"></span> training runs between <span data-v="first_date"></span> and <span data-v="last_date"></span>, each scored on its own dataset's validation photos. Scores from different datasets cannot be compared with each other, so the points below compare runs on the same data.</p>
+      <h3>On the merged data, starting over beat continuing</h3>
+      <p>After the four sets were merged (<span data-v="final_dataset"></span>), the runs that continued from the earlier model peaked at <span data-v="before_best"></span> validation mAP50. A fresh run from scratch on the same data reached <span data-v="final_val"></span>, so it became the final model. Two later runs that continued from it scored <span data-v="after"></span>, no better.</p>
+      <h3>Training on from a finished model added nothing</h3>
+      <p id="stalled"></p>
+      <h3>Merging datasets leaked test photos</h3>
+      <p>The four sets were split into training, validation and test photos on their own, then merged. <span data-v="leaked"></span> of the <span data-v="test_photos"></span> merged test photos also sit in the training or validation split, so a test score on all of them would be too high. The scores above leave them out. Splitting by source photo after merging would avoid this.</p>
+      <details>
+        <summary>All <span data-v="runs_n"></span> training runs</summary>
+        <div class="table-wrap">
+          <table id="runs-table">
+            <thead><tr><th>Run</th><th>Date</th><th>Dataset</th><th>Starting weights</th><th>Best epoch</th><th>Validation mAP50</th><th>Validation mAP50-95</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel">
+      <h2>Training curves of the final model</h2>
+      <a href="img/final-results.png"><img src="img/final-results.png" alt="Final model training losses, precision, recall, mAP50 and mAP50-95 per epoch" loading="lazy"></a>
+    </section>
+
+    <section class="panel prose">
+      <h2>Limitations and next steps</h2>
+      <p>The model guesses gender from appearance and knows only two labels, so it will mislabel people whose appearance does not match how they identify. It was built to demonstrate object detection, not to decide anyone's gender. The test photos come from the same sources as the training photos, so accuracy on a new camera is likely lower. Each frame is labelled on its own, so a person's label can flicker from frame to frame.</p>
+      <ol>
+        <li>Split training, validation and test photos by source photo after merging datasets.</li>
+        <li>Track each person across frames and keep one label per person, so labels stop flickering.</li>
+        <li>Label footage from the demo camera itself and measure accuracy there, for women and men separately.</li>
+      </ol>
+      <h2>Who built what</h2>
+      <ul>
+        <li>Labelling the datasets and training every model: weikang14, as a project at work</li>
+        <li>This page, scoring the final model on the clean test photos and the privacy-safe demo clip: built with Claude Code, an AI coding assistant</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

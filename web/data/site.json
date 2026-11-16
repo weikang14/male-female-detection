@@ -1,0 +1,479 @@
+{
+ "final_run": "NewGender/Model_1",
+ "conf": 0.5,
+ "test_photos": 696,
+ "leaked": 95,
+ "clean_photos": 601,
+ "female_boxes": 689,
+ "male_boxes": 397,
+ "test": {
+  "precision": 0.823,
+  "recall": 0.82,
+  "map50": 0.868,
+  "map50_95": 0.691
+ },
+ "per_class": {
+  "Female": {
+   "map50": 0.911,
+   "map50_95": 0.746
+  },
+  "Male": {
+   "map50": 0.826,
+   "map50_95": 0.637
+  }
+ },
+ "gender": {
+  "people": 1086,
+  "found": 862,
+  "right": 833,
+  "female_as_male": 11,
+  "male_as_female": 18,
+  "extra": 67
+ },
+ "dataset": {
+  "train": 10784,
+  "valid": 952,
+  "test": 696
+ },
+ "unique_train_photos": 2985,
+ "runs": [
+  {
+   "run": "trainResult/result_yolov10s_yaml2",
+   "date": "2024-09-19",
+   "dataset": "gender_yolo",
+   "start": "from scratch",
+   "epochs_run": 297,
+   "best_epoch": 197,
+   "val_map50": 0.89,
+   "val_map50_95": 0.718
+  },
+  {
+   "run": "trainResult/result_yolov10s_yaml3",
+   "date": "2024-09-19",
+   "dataset": "gender_yolo2",
+   "start": "from scratch",
+   "epochs_run": 500,
+   "best_epoch": 457,
+   "val_map50": 0.862,
+   "val_map50_95": 0.665
+  },
+  {
+   "run": "TrainGender/model_10sy",
+   "date": "2024-09-24",
+   "dataset": "original",
+   "start": "from scratch",
+   "epochs_run": 500,
+   "best_epoch": 412,
+   "val_map50": 0.863,
+   "val_map50_95": 0.673
+  },
+  {
+   "run": "TrainGender/model_10sy2",
+   "date": "2024-09-25",
+   "dataset": "normal",
+   "start": "from scratch",
+   "epochs_run": 359,
+   "best_epoch": 259,
+   "val_map50": 0.873,
+   "val_map50_95": 0.692
+  },
+  {
+   "run": "TrainGender/model_10sy2.2",
+   "date": "2024-09-25",
+   "dataset": "aaaa_strong",
+   "start": "from scratch",
+   "epochs_run": 353,
+   "best_epoch": 313,
+   "val_map50": 0.88,
+   "val_map50_95": 0.564
+  },
+  {
+   "run": "TrainGender/model_10sy3",
+   "date": "2024-09-25",
+   "dataset": "normal",
+   "start": "from scratch",
+   "epochs_run": 105,
+   "best_epoch": 83,
+   "val_map50": 0.865,
+   "val_map50_95": 0.664
+  },
+  {
+   "run": "TrainGender/GenderModel",
+   "date": "2024-09-26",
+   "dataset": "aaaa_normal",
+   "start": "COCO pre-trained",
+   "epochs_run": 295,
+   "best_epoch": 195,
+   "val_map50": 0.901,
+   "val_map50_95": 0.594
+  },
+  {
+   "run": "TrainGender/model_10sp2.3",
+   "date": "2024-09-26",
+   "dataset": "aaaa_strong",
+   "start": "COCO pre-trained",
+   "epochs_run": 353,
+   "best_epoch": 313,
+   "val_map50": 0.88,
+   "val_map50_95": 0.564
+  },
+  {
+   "run": "TrainGender/GenderModel_1.2",
+   "date": "2024-09-27",
+   "dataset": "aaaa_normal",
+   "start": "from scratch",
+   "epochs_run": 247,
+   "best_epoch": 147,
+   "val_map50": 0.878,
+   "val_map50_95": 0.575
+  },
+  {
+   "run": "TrainGender/GenderModel_1.3",
+   "date": "2024-09-27",
+   "dataset": "original",
+   "start": "from scratch",
+   "epochs_run": 493,
+   "best_epoch": 393,
+   "val_map50": 0.867,
+   "val_map50_95": 0.68
+  },
+  {
+   "run": "TrainGender/GenderModel_2",
+   "date": "2024-09-27",
+   "dataset": "aaaa_original",
+   "start": "continued",
+   "epochs_run": 387,
+   "best_epoch": 287,
+   "val_map50": 0.886,
+   "val_map50_95": 0.536
+  },
+  {
+   "run": "TrainGender/GenderModel_2.2",
+   "date": "2024-09-27",
+   "dataset": "original2",
+   "start": "continued",
+   "epochs_run": 236,
+   "best_epoch": 136,
+   "val_map50": 0.715,
+   "val_map50_95": 0.406
+  },
+  {
+   "run": "TrainGender/GenderModel_2.3",
+   "date": "2024-09-27",
+   "dataset": "aaaa_original",
+   "start": "continued",
+   "epochs_run": 311,
+   "best_epoch": 211,
+   "val_map50": 0.9,
+   "val_map50_95": 0.559
+  },
+  {
+   "run": "TrainGender/GenderModel_3",
+   "date": "2024-09-29",
+   "dataset": "original2",
+   "start": "continued",
+   "epochs_run": 140,
+   "best_epoch": 40,
+   "val_map50": 0.71,
+   "val_map50_95": 0.403
+  },
+  {
+   "run": "TrainGender/GenderModel_3.2",
+   "date": "2024-09-30",
+   "dataset": "original2",
+   "start": "continued",
+   "epochs_run": 169,
+   "best_epoch": 69,
+   "val_map50": 0.706,
+   "val_map50_95": 0.407
+  },
+  {
+   "run": "TrainGender/GenderModel_3.3",
+   "date": "2024-09-30",
+   "dataset": "original2",
+   "start": "continued",
+   "epochs_run": 134,
+   "best_epoch": 34,
+   "val_map50": 0.713,
+   "val_map50_95": 0.406
+  },
+  {
+   "run": "TrainGender/GenderModel_3.4",
+   "date": "2024-09-30",
+   "dataset": "normal",
+   "start": "continued",
+   "epochs_run": 401,
+   "best_epoch": 301,
+   "val_map50": 0.87,
+   "val_map50_95": 0.677
+  },
+  {
+   "run": "TrainGender/GenderModel_3.4.1",
+   "date": "2024-10-01",
+   "dataset": "normal",
+   "start": "continued",
+   "epochs_run": 314,
+   "best_epoch": 214,
+   "val_map50": 0.861,
+   "val_map50_95": 0.639
+  },
+  {
+   "run": "TrainGender/GenderModel_3.4.2",
+   "date": "2024-10-02",
+   "dataset": "normal",
+   "start": "continued",
+   "epochs_run": 364,
+   "best_epoch": 264,
+   "val_map50": 0.882,
+   "val_map50_95": 0.699
+  },
+  {
+   "run": "TrainGender/GenderModel_3.4.3",
+   "date": "2024-10-02",
+   "dataset": "aaaa_normal",
+   "start": "continued",
+   "epochs_run": 246,
+   "best_epoch": 146,
+   "val_map50": 0.882,
+   "val_map50_95": 0.563
+  },
+  {
+   "run": "TrainGender/GenderModel_3.5",
+   "date": "2024-10-03",
+   "dataset": "normal",
+   "start": "continued",
+   "epochs_run": 101,
+   "best_epoch": 1,
+   "val_map50": 0.872,
+   "val_map50_95": 0.696
+  },
+  {
+   "run": "TrainGender/GenderModel_3.5.2",
+   "date": "2024-10-03",
+   "dataset": "normal",
+   "start": "continued",
+   "epochs_run": 101,
+   "best_epoch": 1,
+   "val_map50": 0.878,
+   "val_map50_95": 0.698
+  },
+  {
+   "run": "TrainGender/GenderModel_3.5.3",
+   "date": "2024-10-03",
+   "dataset": "aaaa_normal",
+   "start": "continued",
+   "epochs_run": 285,
+   "best_epoch": 185,
+   "val_map50": 0.876,
+   "val_map50_95": 0.566
+  },
+  {
+   "run": "TrainGender/GenderModel_4",
+   "date": "2024-10-03",
+   "dataset": "aaaa_original",
+   "start": "continued",
+   "epochs_run": 313,
+   "best_epoch": 213,
+   "val_map50": 0.891,
+   "val_map50_95": 0.561
+  },
+  {
+   "run": "TrainGender/GenderModel_4.2",
+   "date": "2024-10-03",
+   "dataset": "aaaa_original",
+   "start": "continued",
+   "epochs_run": 101,
+   "best_epoch": 1,
+   "val_map50": 0.881,
+   "val_map50_95": 0.558
+  },
+  {
+   "run": "TrainGender/GenderModel_4.3",
+   "date": "2024-10-03",
+   "dataset": "aaaa_original",
+   "start": "continued",
+   "epochs_run": 197,
+   "best_epoch": 97,
+   "val_map50": 0.873,
+   "val_map50_95": 0.541
+  },
+  {
+   "run": "TrainGender/GenderModel_4.4",
+   "date": "2024-10-04",
+   "dataset": "last",
+   "start": "continued",
+   "epochs_run": 216,
+   "best_epoch": 116,
+   "val_map50": 0.699,
+   "val_map50_95": 0.4
+  },
+  {
+   "run": "TrainGender/GenderModel_4.5",
+   "date": "2024-10-04",
+   "dataset": "last",
+   "start": "continued",
+   "epochs_run": 210,
+   "best_epoch": 110,
+   "val_map50": 0.698,
+   "val_map50_95": 0.41
+  },
+  {
+   "run": "TrainGender/GenderModel_4.6",
+   "date": "2024-10-04",
+   "dataset": "last",
+   "start": "continued",
+   "epochs_run": 342,
+   "best_epoch": 242,
+   "val_map50": 0.696,
+   "val_map50_95": 0.408
+  },
+  {
+   "run": "TrainGender/GenderModel_5",
+   "date": "2024-10-04",
+   "dataset": "aaaa_original",
+   "start": "continued",
+   "epochs_run": 164,
+   "best_epoch": 151,
+   "val_map50": 0.847,
+   "val_map50_95": 0.503
+  },
+  {
+   "run": "TrainGender/Model_1",
+   "date": "2024-10-04",
+   "dataset": "aaaa_original",
+   "start": "continued",
+   "epochs_run": 315,
+   "best_epoch": 215,
+   "val_map50": 0.856,
+   "val_map50_95": 0.506
+  },
+  {
+   "run": "TrainGender/Model_1.2",
+   "date": "2024-10-04",
+   "dataset": "aaaa_normal",
+   "start": "continued",
+   "epochs_run": 101,
+   "best_epoch": 1,
+   "val_map50": 0.845,
+   "val_map50_95": 0.489
+  },
+  {
+   "run": "TrainGender/Model_2",
+   "date": "2024-10-05",
+   "dataset": "aaaa_original",
+   "start": "continued",
+   "epochs_run": 468,
+   "best_epoch": 368,
+   "val_map50": 0.79,
+   "val_map50_95": 0.439
+  },
+  {
+   "run": "TrainGender/Model_3",
+   "date": "2024-10-05",
+   "dataset": "extra",
+   "start": "continued",
+   "epochs_run": 391,
+   "best_epoch": 291,
+   "val_map50": 0.878,
+   "val_map50_95": 0.69
+  },
+  {
+   "run": "TrainGender/Model_4",
+   "date": "2024-10-06",
+   "dataset": "mix",
+   "start": "continued",
+   "epochs_run": 204,
+   "best_epoch": 104,
+   "val_map50": 0.857,
+   "val_map50_95": 0.625
+  },
+  {
+   "run": "TrainGender/Model_5",
+   "date": "2024-10-07",
+   "dataset": "mix",
+   "start": "continued",
+   "epochs_run": 102,
+   "best_epoch": 2,
+   "val_map50": 0.859,
+   "val_map50_95": 0.619
+  },
+  {
+   "run": "TrainGender/Model_6",
+   "date": "2024-10-08",
+   "dataset": "mix2",
+   "start": "continued",
+   "epochs_run": 183,
+   "best_epoch": 83,
+   "val_map50": 0.831,
+   "val_map50_95": 0.611
+  },
+  {
+   "run": "TrainGender/Model_62",
+   "date": "2024-10-09",
+   "dataset": "mix3",
+   "start": "continued",
+   "epochs_run": 171,
+   "best_epoch": 71,
+   "val_map50": 0.755,
+   "val_map50_95": 0.508
+  },
+  {
+   "run": "TrainGender/Model_7",
+   "date": "2024-10-10",
+   "dataset": "mix3",
+   "start": "continued",
+   "epochs_run": 195,
+   "best_epoch": 95,
+   "val_map50": 0.73,
+   "val_map50_95": 0.491
+  },
+  {
+   "run": "TrainGender/Model_7.2",
+   "date": "2024-10-10",
+   "dataset": "mix3",
+   "start": "continued",
+   "epochs_run": 3,
+   "best_epoch": 2,
+   "val_map50": 0.74,
+   "val_map50_95": 0.492
+  },
+  {
+   "run": "NewGender/Model_1",
+   "date": "2024-11-12",
+   "dataset": "mix3",
+   "start": "from scratch",
+   "epochs_run": 399,
+   "best_epoch": 300,
+   "val_map50": 0.858,
+   "val_map50_95": 0.621
+  },
+  {
+   "run": "NewGender/Model_2",
+   "date": "2024-11-14",
+   "dataset": "mix3",
+   "start": "continued",
+   "epochs_run": 100,
+   "best_epoch": 97,
+   "val_map50": 0.857,
+   "val_map50_95": 0.621
+  },
+  {
+   "run": "NewGender/Model_2.2",
+   "date": "2024-11-15",
+   "dataset": "mix3",
+   "start": "continued",
+   "epochs_run": 85,
+   "best_epoch": 54,
+   "val_map50": 0.845,
+   "val_map50_95": 0.617
+  }
+ ],
+ "demo": {
+  "clip_s": 20,
+  "start_s": 2125,
+  "boxes": {
+   "Female": 2068,
+   "Male": 1486
+  }
+ }
+}
