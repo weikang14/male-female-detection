@@ -474,6 +474,10 @@
   "boxes": {
    "Female": 2068,
    "Male": 1486
+  },
+  "open_day": {
+   "clip_s": 20,
+   "start_s": 50
   }
  }
 }

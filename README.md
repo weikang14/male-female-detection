@@ -46,7 +46,7 @@ The model guesses gender from appearance and knows only two labels, so it will m
 
 ## Privacy
 
-The demo clip on the page comes from an event video used in the project. Before it was published, the top of every person box from the gender model and from two COCO person detectors, and every face OpenCV finds, was pixelated, and each pixelated region stays in place for six frames so a missed detection in one frame cannot show a face. The raw videos and photos are not in this repository.
+The event clip on the page comes from an event video used in the project. Before it was published, the top of every person box from the gender model and from two COCO person detectors, and every face OpenCV finds, was pixelated, and each pixelated region stays in place for six frames so a missed detection in one frame cannot show a face. The open-day clip is a recording from the demo's webcam with the live boxes already drawn on it; only the author and those boxes are left sharp, and everything else, including another person and the banners that name the venue, is pixelated. The raw videos and photos are not in this repository.
 
 ## Who built what
 

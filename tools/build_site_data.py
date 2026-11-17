@@ -195,10 +195,60 @@ def render_demo(video: Path, project: Path, seconds: int = 20, width: int = 1280
     return {"clip_s": seconds, "start_s": round(start / fps), "boxes": counts}
 
 
+def render_open_day(video: Path, project: Path, start_s: int = 50, seconds: int = 20) -> dict:
+    """The open-day webcam recording already has the live demo's boxes drawn on it. Keep the presenter (the
+    project's author, who agreed to be shown) and those boxes sharp; pixelate everything else, including the
+    other person and the banners that name the organisation."""
+    import cv2
+    import numpy as np
+    from ultralytics import YOLO
+
+    people = YOLO(project / "yolov10s.pt")
+    cap = cv2.VideoCapture(str(video))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    cap.set(cv2.CAP_PROP_POS_FRAMES, int(start_s * fps))
+    w, h = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    ff = subprocess.Popen([os.environ.get("FFMPEG", "ffmpeg"), "-y", "-loglevel", "error", "-f", "rawvideo",
+                           "-pix_fmt", "bgr24", "-s", f"{w}x{h}", "-r", str(fps), "-i", "-", "-c:v", "libx264",
+                           "-crf", "26", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+                           str(OUT / "open-day.mp4")], stdin=subprocess.PIPE)
+    for _ in range(int(seconds * fps)):
+        ok, f = cap.read()
+        if not ok:
+            break
+        hsv = cv2.cvtColor(f, cv2.COLOR_BGR2HSV)
+        keep = np.zeros((h, w), np.uint8)
+        # The presenter sits right of the other person: the largest person box centred right of 30% of the width.
+        boxes = [b for b in people.predict(f, conf=0.25, classes=[0], device=0, verbose=False)[0].boxes.xyxy.tolist()
+                 if (b[0] + b[2]) / 2 > 0.3 * w]
+        if boxes:
+            x1, y1, x2, y2 = map(int, max(boxes, key=lambda b: (b[2] - b[0]) * (b[3] - b[1])))
+            x1, y1, x2, y2 = max(0, x1 - 5), max(0, y1 - 5), min(w - 1, x2 + 5), min(h - 1, y2 + 5)
+            m = np.zeros((h, w), np.uint8)
+            cv2.grabCut(f, m, (x1, y1, x2 - x1, y2 - y1), np.zeros((1, 65)), np.zeros((1, 65)), 4,
+                        cv2.GC_INIT_WITH_RECT)
+            keep = np.where((m == 1) | (m == 3), 255, 0).astype(np.uint8)
+            keep[cv2.inRange(hsv, (0, 0, 170), (180, 60, 255)) > 0] = 0  # white banner and the text on it
+            keep = cv2.morphologyEx(keep, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+            n, lab, stats, _ = cv2.connectedComponentsWithStats(keep)
+            if n > 1:  # only the presenter's own silhouette
+                keep = np.where(lab == 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA])), 255, 0).astype(np.uint8)
+            keep = cv2.morphologyEx(keep, cv2.MORPH_CLOSE, np.ones((15, 15), np.uint8))
+        keep |= cv2.inRange(hsv, (80, 150, 150), (100, 255, 255))  # the live demo's cyan boxes and labels
+        out = cv2.resize(cv2.resize(f, (w // 24, h // 24), interpolation=cv2.INTER_AREA), (w, h),
+                         interpolation=cv2.INTER_NEAREST)
+        out[keep > 0] = f[keep > 0]
+        ff.stdin.write(out.tobytes())
+    ff.stdin.close()
+    ff.wait()
+    return {"clip_s": seconds, "start_s": start_s}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--project", type=Path, required=True)
     ap.add_argument("--video", type=Path, required=True)
+    ap.add_argument("--open-day", type=Path, help="the webcam recording from the open day (runs/detect/predict68/0.avi)")
     a = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
     runs = history(a.project)
@@ -207,6 +257,8 @@ def main() -> None:
     for f in KEEP[:1]:
         shutil.copy2(ROOT / "training_results" / FINAL_RUN / f, ROOT / "web" / "img" / "final-results.png")
     demo = render_demo(a.video, a.project)
+    if a.open_day:
+        demo["open_day"] = render_open_day(a.open_day, a.project)
     (OUT / "site.json").write_text(json.dumps({"final_run": FINAL_RUN, "conf": CONF, **ev, "runs": runs,
                                                "demo": demo}, indent=1))
     print("done:", len(runs), "runs,", demo)
