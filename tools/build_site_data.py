@@ -25,9 +25,6 @@ FINAL_RUN = "NewGender/Model_1"  # models/male_female.pt is this run's best.pt (
 CONF = 0.5
 COLORS = {"Female": (46, 138, 201), "Male": (181, 120, 58)}  # BGR of #C98A2E and #3A78B5
 KEEP = ["results.png", "PR_curve.png", "confusion_matrix_normalized.png"]
-# ponytail: fixed patch for the event clip (static camera, 1280 wide): someone half out of frame at the left edge
-# whom no detector finds. Another video needs its own check.
-ALWAYS_PIXELATE = [(0, 110, 130, 340)]
 base = lambda name: name.split(".rf.")[0]
 
 
@@ -114,26 +111,12 @@ def evaluate(project: Path) -> dict:
             "unique_train_photos": len({base(f) for f in os.listdir(ds / "train" / "images")})}
 
 
-def pixelate(img, x1, y1, x2, y2):
-    import cv2
-    h, w = img.shape[:2]
-    x1, y1, x2, y2 = max(0, int(x1)), max(0, int(y1)), min(w, int(x2)), min(h, int(y2))
-    if x2 - x1 < 2 or y2 - y1 < 2:
-        return
-    roi = img[y1:y2, x1:x2]
-    small = cv2.resize(roi, (max(1, (x2 - x1) // 12), max(1, (y2 - y1) // 12)), interpolation=cv2.INTER_LINEAR)
-    img[y1:y2, x1:x2] = cv2.resize(small, (x2 - x1, y2 - y1), interpolation=cv2.INTER_NEAREST)
-
-
-def render_demo(video: Path, project: Path, seconds: int = 20, width: int = 1280, start: int | None = None) -> dict:
-    """Pick the busiest window, then write it with every head pixelated and the gender boxes drawn on top."""
+def render_demo(video: Path, seconds: int = 20, width: int = 1280, start: int | None = None) -> dict:
+    """Pick the busiest window and write it with the gender boxes drawn on. The event organiser allowed filming."""
     import cv2
     from ultralytics import YOLO
 
     model = YOLO(MODEL)
-    people = [YOLO(project / "yolo11n.pt"), YOLO(project / "yolov10s.pt")]  # two COCO person detectors
-    faces = [cv2.CascadeClassifier(cv2.data.haarcascades + f) for f in
-             ("haarcascade_frontalface_default.xml", "haarcascade_profileface.xml")]
     cap = cv2.VideoCapture(str(video))
     fps, total = cap.get(cv2.CAP_PROP_FPS), int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     step = int(fps * 5)
@@ -158,26 +141,12 @@ def render_demo(video: Path, project: Path, seconds: int = 20, width: int = 1280
                            "-crf", "27", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(OUT / "demo.mp4")],
                           stdin=subprocess.PIPE)
     counts = {"Female": 0, "Male": 0}
-    recent = []  # head regions of the last few frames, so a one-frame miss never shows a face
     for _ in range(int(fps * seconds)):
         ok, frame = cap.read()
         if not ok:
             break
         frame = cv2.resize(frame, (width, h))
         det = model.predict(frame, conf=CONF, device=0, verbose=False)[0]
-        # Privacy: pixelate the top of every person box from both models and every face OpenCV finds.
-        boxes = det.boxes.xyxy.tolist()
-        for m in people:
-            boxes += m.predict(frame, conf=0.15, classes=[0], device=0, verbose=False)[0].boxes.xyxy.tolist()
-        heads = [(x1 - 0.15 * (x2 - x1), y1 - 0.15 * (x2 - x1), x2 + 0.15 * (x2 - x1),
-                  y1 + max(0.45 * (y2 - y1), 1.2 * (x2 - x1))) for x1, y1, x2, y2 in boxes]
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        for c in faces:
-            heads += [(x - fw * 0.3, y - fh * 0.3, x + fw * 1.3, y + fh * 1.3)
-                      for x, y, fw, fh in c.detectMultiScale(gray, 1.1, 4, minSize=(16, 16))]
-        recent = (recent + [heads + ALWAYS_PIXELATE])[-6:]
-        for region in (r for frame_heads in recent for r in frame_heads):
-            pixelate(frame, *region)
         for (x1, y1, x2, y2), c, s in zip(det.boxes.xyxy.int().tolist(), det.boxes.cls.int().tolist(),
                                           det.boxes.conf.tolist()):
             name = model.names[c]
@@ -195,10 +164,10 @@ def render_demo(video: Path, project: Path, seconds: int = 20, width: int = 1280
     return {"clip_s": seconds, "start_s": round(start / fps), "boxes": counts}
 
 
-def render_open_day(video: Path, project: Path, start_s: int = 50, seconds: int = 20) -> dict:
+def render_open_day(video: Path, project: Path, start_s: int = 4, seconds: int = 20) -> dict:
     """The open-day webcam recording already has the live demo's boxes drawn on it. Keep the presenter (the
     project's author, who agreed to be shown) and those boxes sharp; pixelate everything else, including the
-    other person and the banners that name the organisation."""
+    other person and the banners that name the organisation. 0:04-0:24 is where the demo boxed both people."""
     import cv2
     import numpy as np
     from ultralytics import YOLO
@@ -229,7 +198,8 @@ def render_open_day(video: Path, project: Path, start_s: int = 50, seconds: int 
                         cv2.GC_INIT_WITH_RECT)
             keep = np.where((m == 1) | (m == 3), 255, 0).astype(np.uint8)
             keep[cv2.inRange(hsv, (0, 0, 170), (180, 60, 255)) > 0] = 0  # white banner and the text on it
-            keep = cv2.morphologyEx(keep, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
+            # An 11 px opening cuts off thin text strokes that touch the hair; the face and hair are thicker.
+            keep = cv2.morphologyEx(keep, cv2.MORPH_OPEN, np.ones((11, 11), np.uint8))
             n, lab, stats, _ = cv2.connectedComponentsWithStats(keep)
             if n > 1:  # only the presenter's own silhouette
                 keep = np.where(lab == 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA])), 255, 0).astype(np.uint8)
@@ -256,7 +226,7 @@ def main() -> None:
     print("test", ev["test"], ev["gender"], flush=True)
     for f in KEEP[:1]:
         shutil.copy2(ROOT / "training_results" / FINAL_RUN / f, ROOT / "web" / "img" / "final-results.png")
-    demo = render_demo(a.video, a.project)
+    demo = render_demo(a.video)
     if a.open_day:
         demo["open_day"] = render_open_day(a.open_day, a.project)
     (OUT / "site.json").write_text(json.dumps({"final_run": FINAL_RUN, "conf": CONF, **ev, "runs": runs,

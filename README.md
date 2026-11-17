@@ -44,21 +44,21 @@ The model guesses gender from appearance and knows only two labels, so it will m
 2. Track each person across frames and keep one label per person, so labels stop flickering.
 3. Label footage from the demo camera itself and measure accuracy there, for women and men separately.
 
-## Privacy
+## The two clips
 
-The event clip on the page comes from an event video used in the project. Before it was published, the top of every person box from the gender model and from two COCO person detectors, and every face OpenCV finds, was pixelated, and each pixelated region stays in place for six frames so a missed detection in one frame cannot show a face. The open-day clip is a recording from the demo's webcam with the live boxes already drawn on it; only the author and those boxes are left sharp, and everything else, including another person and the banners that name the venue, is pixelated. The raw videos and photos are not in this repository.
+The event clip was filmed with the event organiser's permission and is shown as the model labels it. The open-day clip is a recording from the demo's webcam with the live boxes already drawn on it; only the author and those boxes are left sharp, and everything else, including another person and the banners that name the venue, is pixelated. The raw videos and photos are not in this repository.
 
 ## Who built what
 
 - **weikang14, as a project at work:** labelling the datasets and training every model. The company is not named here.
-- **Built with [Claude Code](https://claude.com/claude-code), an AI coding assistant:** this page, scoring the final model on the clean test photos and the privacy-safe demo clip (`tools/build_site_data.py`).
+- **Built with [Claude Code](https://claude.com/claude-code), an AI coding assistant:** this page, scoring the final model on the clean test photos and preparing the two clips (`tools/build_site_data.py`).
 
 ## Repository layout
 
 ```
 models/male_female.pt        final model (YOLOv10s)
 training_results/<run>/      args and metrics per epoch of every run, plots of the final one
-tools/build_site_data.py     scores the final model, lists every run, renders the demo clip, writes web/data/
+tools/build_site_data.py     scores the final model, lists every run, renders the two clips, writes web/data/
 tools/serve.py               local static server (supports video seeking)
 web/                         the page (plain HTML, CSS and JS)
 tests/                       checks that this README matches web/data/site.json
@@ -73,7 +73,7 @@ python tools/serve.py        # then open http://127.0.0.1:8765
 Rebuilding the site data needs Ultralytics 8.3 or newer, a CUDA GPU, ffmpeg, and the training folder and video (not in this repository):
 
 ```
-python tools/build_site_data.py --project path/to/training/folder --video path/to/event.mp4
+python tools/build_site_data.py --project path/to/training/folder --video path/to/event.mp4 --open-day path/to/webcam.avi
 python -m pytest tests
 ```
 

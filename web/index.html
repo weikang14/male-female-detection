@@ -22,11 +22,11 @@
 
   <main class="wrap" id="view">
     <section class="panel demo">
-      <video src="data/demo.mp4" poster="img/poster.jpg" controls muted loop playsinline preload="metadata" aria-label="People at an outdoor event, each boxed and labelled male or female, with heads pixelated"></video>
+      <video src="data/demo.mp4" poster="img/poster.jpg" controls muted loop playsinline preload="metadata" aria-label="People at an outdoor event, each boxed and labelled male or female"></video>
       <div>
         <h2>What it does</h2>
         <p>At the open day, visiting students stood in front of a webcam and watched the model find each person and label them male or female in real time. The goal was to show what computer vision can do, not to build a product. The final model was also exported to ONNX, TensorRT and TorchScript for faster inference.</p>
-        <p class="muted">The clip is <span data-v="demo.clip_s"></span> seconds of an event video from the project, run through the final model at confidence <span data-v="conf"></span>. Heads are pixelated for privacy: every person found by the model or by two COCO person detectors, and every face OpenCV finds.</p>
+        <p class="muted">The clip is <span data-v="demo.clip_s"></span> seconds of an event video from the project, filmed with the event organiser's permission, run through the final model at confidence <span data-v="conf"></span>.</p>
       </div>
     </section>
 
@@ -35,7 +35,7 @@
       <div>
         <h2>At the open day</h2>
         <p>A recording from the demo's webcam on the day, with the boxes and labels the live demo drew on screen.</p>
-        <p class="muted">The person left in view is the author of this project. Everything else, including another person and the banners that name the venue, is pixelated.</p>
+        <p class="muted">The person left in view is the author of this project. Everything else is pixelated, including the banners that name the venue and the other person, who keeps the box the demo drew on him.</p>
       </div>
     </section>
 
@@ -87,7 +87,7 @@
       <h2>Who built what</h2>
       <ul>
         <li>Labelling the datasets and training every model: weikang14, as a project at work</li>
-        <li>This page, scoring the final model on the clean test photos and the privacy-safe demo clip: built with Claude Code, an AI coding assistant</li>
+        <li>This page, scoring the final model on the clean test photos and preparing the two clips: built with Claude Code, an AI coding assistant</li>
       </ul>
     </section>
   </main>
